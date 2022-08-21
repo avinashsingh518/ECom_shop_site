@@ -1,10 +1,95 @@
-
-# Create your views here.
-
 from django.contrib import auth
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from .models import product, Contact, Cloth
+from django.shortcuts import redirect
+from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import *
+from .models import *
+
+"""<-------APIView method for serializer---start-------->"""
+
+"""<----------for manually token generation---start--->"""
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+class RegisterAPI(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if not serializer.is_valid():
+            print(serializer.errors)
+            return Response({'status': 403, 'errors': serializer.errors, 'message': 'something went wrong'})
+        serializer.save()
+
+        user = User.objects.get(username=serializer.data['username'])
+        refresh = RefreshToken.for_user(user)
+
+        return Response(
+            {'status': 200, 'payload': serializer.data, 'refresh': str(refresh), 'access': str(refresh.access_token),
+             'message': 'your data is save'})
+
+
+"""<----------for manually token generation---end--->"""
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
+class productAPI(APIView):
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        queryset = product.objects.all()
+        serializer = productSerializer(queryset, many=True)
+        print(request.user)
+        return Response({'status': 200, 'payload': serializer.data})
+
+    def post(self, request):
+        serializer = productSerializer(data=request.data)
+        if not serializer.is_valid():
+            print(serializer.errors)
+            return Response({'status': 403, 'errors': serializer.errors, 'message': 'something went wrong'})
+        serializer.save()
+        return Response({'status': 200, 'payload': serializer.data, 'message': 'your data is save'})
+
+    def patch(self, request):
+        try:
+            stu_obj = product.objects.get(id=request.data['id'])
+            serializer = productSerializer(stu_obj, data=request.data, partial=True)
+            if not serializer.is_valid():
+                print(serializer.errors)
+                return Response({'status': 403, 'errors': serializer.errors, 'message': 'something went wrong'})
+            serializer.save()
+            return Response({'status': 200, 'payload': serializer.data, 'message': 'your data is save'})
+        except Exception as e:
+            print(e)
+            return Response({'status': 403, 'message': 'you have entered invalid id'})
+
+    def put(self, request):
+        try:
+            stu_obj = product.objects.get(id=request.data['id'])
+            serializer = productSerializer(stu_obj, data=request.data, partial=False)
+            if not serializer.is_valid():
+                print(serializer.errors)
+                return Response({'status': 403, 'errors': serializer.errors, 'message': 'something went wrong'})
+            serializer.save()
+            return Response({'status': 200, 'payload': serializer.data, 'message': 'your data is save'})
+        except Exception as e:
+            print(e)
+            return Response({'status': 403, 'message': 'you have entered invalid id'})
+
+    def delete(self, request):
+        try:
+            id = request.GET.get('id')
+            stu_obj = product.objects.get(id=id)
+            stu_obj.delete()
+            return Response({'status': 200, 'message': 'deleted'})
+
+        except Exception as e:
+            print(e)
+            return Response({'status': 403, 'message': 'you have entered invalid id'})
+
+
+
+"""<-------APIView method for serializer------end----->"""
 
 
 def home(request):

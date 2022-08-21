@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>login page</title>
+    <style>
+        header{
+           font-size: 300%;
+        }
+         *{
+          color: red;
+          text-align: center;
+        }
+        body {
+          background-color: lightblue;
+        }
+        </style>  
 </head>
 <body>
+    <header>LOGIN FORM</header>
+<br>
+<hr>
+<br>
 <form action="login" method="POST">
 
  {% csrf_token %}
@@ -17,6 +33,6 @@
 
 
 </form>
-
+<a href="{% url 'index' %} " ><button type="button "  >Home</button></a>
 </body>
 </html>

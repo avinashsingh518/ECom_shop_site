@@ -2,11 +2,16 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+from .views import *
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='home'),
+
+    path('product/',productAPI.as_view() ),                        #rout for product api
+    path('register/',RegisterAPI.as_view() ),                      #rout for register api
+
     path('index/', views.index, name='index'),
     path('check_out/', views.check_out, name='check_out'),
     path('blog/', views.blog, name='blog'),
