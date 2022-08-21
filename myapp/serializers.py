@@ -23,11 +23,6 @@ class productSerializer(serializers.ModelSerializer):
         if data['price'] < 5:
             raise serializers.ValidationError({'errors': "price can not be less than 5"})
 
-        if data['price']:
-            for n in data['price']:
-                if n.isalpha():
-                    raise serializers.ValidationError({'errors': "price should be in digit only"})
-
         return data
 
 """<----------API View Decorator , Model Serializer-----APIVIew Serializer-----end------>"""
