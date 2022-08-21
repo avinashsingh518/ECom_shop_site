@@ -124,6 +124,9 @@ DATABASES = {
         'PASSWORD': 'golusingh@518',
         'HOST': 'localhost',
         'PORT': '3306',
+        'OPTIONS': {
+            'read_default_file': '/opt/lampp/etc/my.cnf',
+        }
     }
 }
 
